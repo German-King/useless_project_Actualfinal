@@ -80,7 +80,7 @@ For Hardware:
 
 ### Project Demo
 # Video
-[demo video](assests/demo_video.mp4)
+[demo video](assets/demo_video.mp4)
 *Explain what the video demonstrates*
 its demo video, shows setting alarm and bribe, since we cant wait for actual alarm to ring, it shows demo, there are several ways alarm can ring, it depends on Mr Clocks mood. he may forget, or ring on time or delay it.
 there shows some other settings too.
