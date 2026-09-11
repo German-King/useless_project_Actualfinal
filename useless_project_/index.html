@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Mr Clock - Alarm + Balance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- HOME SCREEN -->
+    <div id="home" class="screen screen--active">
+
+      <!-- DND BUTTON (TOP LEFT) -->
+      <button class="dnd-btn" id="dndBtn" aria-label="Do Not Disturb">DND</button>
+
+      <!-- BANK BALANCE (TOP RIGHT) -->
+      <button class="bank-btn" id="bankBtn" aria-label="Edit bank balance">
+        <span class="bank-amount" id="bankAmount">$1,900</span>
+      </button>
+      <div class="bank-editor" id="bankEditor">
+        <span class="bank-prefix">$</span>
+        <input id="bankInput" type="number" inputmode="numeric" placeholder="1900" min="0" max="9999999" autocomplete="off" />
+        <button class="bank-confirm" id="bankConfirm">&#10003;</button>
+      </div>
+
+      <!-- MAIN CLOCK AREA -->
+      <div class="radial-area" id="radialArea">
+        <div class="stage-label" id="stageLabel"><span id="stageLabelText">MR CLOCK</span></div>
+        <div class="radial-wrap" id="radialWrap">
+          <svg id="radialSvg" viewBox="0 0 340 340" aria-hidden="true" focusable="false">
+            <circle class="svg-ring-outer" cx="170" cy="170" r="158" />
+            <circle class="svg-ring-track" cx="170" cy="170" r="148" />
+            <circle class="svg-ring-inner" cx="170" cy="170" r="112" />
+            <g id="ticksGroup" aria-hidden="true"></g>
+            <path id="selectionArc" class="svg-arc" d="" />
+            <line id="ampmSplitLine" class="svg-ampm-split" x1="170" y1="22" x2="170" y2="318" />
+            <text id="svgAmLabel" class="svg-ampm-text" x="96" y="176">AM</text>
+            <text id="svgPmLabel" class="svg-ampm-text" x="244" y="176">PM</text>
+            <circle id="handleDot" class="svg-handle" cx="170" cy="22" r="9" />
+            <circle id="idlePulse" class="svg-idle-pulse" cx="170" cy="170" r="5" />
+          </svg>
+          <div class="radial-center" id="radialCenter"></div>
+          <div class="radial-touch" id="radialTouch" role="slider" tabindex="0" aria-label="Drag to set alarm time"></div>
+        </div>
+        <p class="radial-hint" id="radialHint">drag to set alarm</p>
+        <div class="alarm-info" id="alarmInfo">
+          <div class="alarm-time-row"><span class="alarm-time-text" id="alarmTimeText">&#8212;</span><span class="alarm-day-tag" id="alarmDayTag">Tomorrow</span></div>
+          <div class="countdown-block"><span class="countdown-lbl" id="countdownLbl">RINGS IN</span><span class="countdown-val" id="countdownVal">--:--:--</span></div>
+        </div>
+      </div>
+
+      <!-- RADIAL MENU TRIGGER (BOTTOM CENTER) -->
+      <div class="radial-menu-trigger" id="radialMenuTrigger">
+        <div class="menu-trigger-inner"></div>
+      </div>
+
+      <!-- RADIAL MENU OPTIONS -->
+      <div class="radial-menu-container" id="radialMenuContainer">
+        <svg class="radial-menu-svg" viewBox="0 0 200 200">
+          <g id="menuOptionsGroup"></g>
+        </svg>
+      </div>
+
+      <div class="dnd-toast" id="dndToast" role="status" aria-live="polite"></div>
+    </div>
+
+    <!-- DND PAYMENT MODAL -->
+    <div id="dndModal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">Do Not Disturb</h2>
+        <p class="modal-desc">Mr Clock will not make a sound, letting you sleep peacefully.</p>
+        <button class="btn-primary" id="payDndBtn">Bribe Mr Clock $100</button>
+        <button class="btn-cancel" id="cancelDndBtn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- HR EMPLOYMENT RECORD MODAL -->
+    <div id="hrModal" class="modal">
+      <div class="modal-content modal-large">
+        <h2 class="modal-title">👔 HR Employment Record</h2>
+        <div class="hr-header">
+          <div class="hr-name">Mr Clock</div>
+          <div class="hr-position">Chief Wake-up Officer (Contractor)</div>
+          <div class="hr-status" id="hrStatus">Status: <span class="status-badge active">ACTIVE</span></div>
+        </div>
+        <div class="hr-details">
+          <div class="hr-row"><span class="hr-label">Employee Since:</span><span id="hrEmployeeSince">Sep 11, 2026</span></div>
+          <div class="hr-row"><span class="hr-label">Total Alarms Handled:</span><span id="hrTotalAlarms">0</span></div>
+          <div class="hr-row"><span class="hr-label">Successful Alarms:</span><span id="hrSuccessAlarms" class="stat-success">0</span></div>
+          <div class="hr-row"><span class="hr-label">Missed Alarms:</span><span id="hrMissedAlarms" class="stat-danger">0</span></div>
+          <div class="hr-row"><span class="hr-label">Delayed Alarms:</span><span id="hrDelayedAlarms" class="stat-warning">0</span></div>
+          <div class="hr-row"><span class="hr-label">Total Bribes Received:</span><span id="hrBribesReceived" class="stat-money">$0</span></div>
+          <div class="hr-row"><span class="hr-label">Bribe Betrayals:</span><span id="hrBribeBetrayal" class="stat-danger">0</span></div>
+          <div class="hr-row">
+            <span class="hr-label" id="hrCorruptionLabel">Corruption Level: 0%</span>
+            <div class="corruption-meter-wrapper">
+              <div class="corruption-meter-bg">
+                <div class="corruption-bar" id="hrCorruptionMeter" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-cancel" id="hrCloseBtn">Close</button>
+      </div>
+    </div>
+
+    <!-- ALARM HISTORY MODAL -->
+    <div id="historyModal" class="modal">
+      <div class="modal-content modal-large">
+        <h2 class="modal-title">📜 Alarm History</h2>
+        <div class="history-stats">
+          <div class="stat-box"><div class="stat-num" id="histTotalAlarms">0</div><div class="stat-label">Total Set</div></div>
+          <div class="stat-box"><div class="stat-num stat-danger" id="histMissedAlarms">0</div><div class="stat-label">Missed</div></div>
+          <div class="stat-box"><div class="stat-num stat-warning" id="histDelayedAlarms">0</div><div class="stat-label">Delayed</div></div>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="empty-state">No alarm history yet. Set your first alarm!</div>
+        </div>
+        <button class="btn-cancel" id="historyCloseBtn">Close</button>
+      </div>
+    </div>
+
+    <!-- FIRE MR CLOCK MODAL -->
+    <div id="fireModal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">🔥 Fire Mr Clock?</h2>
+        <p class="modal-desc" id="fireModalDesc">Out of <strong>0 alarms</strong>, he missed <strong>0</strong> and delayed <strong>0</strong>.</p>
+        <p class="modal-desc fire-warning" id="fireWarning">Are you sure you want to let him go?</p>
+        <button class="btn-danger" id="confirmFireBtn">Fire Him</button>
+        <button class="btn-primary" id="giveChanceBtn">Give Him Another Chance</button>
+        <button class="btn-cancel" id="fireCancelBtn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- RELIABILITY MODAL -->
+    <div id="reliabilityModal" class="modal">
+      <div class="modal-content modal-large">
+        <h2 class="modal-title">📊 Reliability Check</h2>
+        <div class="reliability-score">
+          <div class="score-circle" id="scoreCircle">
+            <span class="score-value" id="scoreValue">--</span>
+            <span class="score-max">/100</span>
+          </div>
+          <div class="score-label" id="scoreLabel">Calculating...</div>
+        </div>
+        <div class="reliability-bars">
+          <div class="rel-bar-item">
+            <div class="rel-bar-label">Perfect Alarms</div>
+            <div class="rel-bar-bg"><div class="rel-bar-fill rel-bar-success" id="relPerfectBar" style="width:0%"></div></div>
+            <div class="rel-bar-value" id="relPerfectVal">0</div>
+          </div>
+          <div class="rel-bar-item">
+            <div class="rel-bar-label">Delayed Alarms</div>
+            <div class="rel-bar-bg"><div class="rel-bar-fill rel-bar-warning" id="relDelayedBar" style="width:0%"></div></div>
+            <div class="rel-bar-value" id="relDelayedVal">0</div>
+          </div>
+          <div class="rel-bar-item">
+            <div class="rel-bar-label">Missed Alarms</div>
+            <div class="rel-bar-bg"><div class="rel-bar-fill rel-bar-danger" id="relMissedBar" style="width:0%"></div></div>
+            <div class="rel-bar-value" id="relMissedVal">0</div>
+          </div>
+        </div>
+        <div class="reliability-verdict" id="reliabilityVerdict">
+          <p>No data available yet. Set some alarms to evaluate performance!</p>
+        </div>
+        <button class="btn-cancel" id="reliabilityCloseBtn">Close</button>
+      </div>
+    </div>
+
+    <!-- RINGTONE MODAL -->
+    <div id="ringtoneModal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">🎵 Change Ringtone</h2>
+        <p class="modal-desc">Upload your own alarm sound (MP3, M4A)</p>
+        <div class="ringtone-current">
+          <div class="ringtone-label">Current:</div>
+          <div class="ringtone-name" id="currentRingtoneName">Default Beeps</div>
+        </div>
+        <input type="file" id="ringtoneInput" accept="audio/mpeg,audio/mp3,audio/mp4,audio/m4a" style="display:none" />
+        <button class="btn-primary" id="uploadRingtoneBtn">Upload New Ringtone</button>
+        <button class="btn-secondary" id="resetRingtoneBtn">Reset to Default</button>
+        <button class="btn-cancel" id="ringtoneCloseBtn">Close</button>
+      </div>
+    </div>
+
+    <!-- HIRE MR CLOCK MODAL -->
+    <div id="hireModal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">💼 Hire Mr Clock?</h2>
+        <p class="modal-desc">Mr Clock is ready to work again as your Chief Wake-up Officer.</p>
+        <p class="modal-desc">Will you give him another shot?</p>
+        <button class="btn-primary" id="confirmHireBtn">Hire Him</button>
+        <button class="btn-cancel" id="hireCancelBtn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- DEMO MODE MODAL -->
+    <div id="demoModal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">🎬 Demo Mode</h2>
+        <p class="modal-desc">Choose how Mr Clock should behave for this alarm demo:</p>
+        <button class="btn-primary" id="demoPerfectBtn">✅ Perfect (On Time)</button>
+        <button class="btn-secondary" id="demoDelayedBtn">⏰ Delayed (10 min)</button>
+        <button class="btn-danger" id="demoMissedBtn">😴 Forget (Miss)</button>
+        <button class="btn-warning" id="demoBetrayalBtn">💰 Bribe Betrayal</button>
+        <button class="btn-cancel" id="demoCancelBtn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- ALARM RINGING SCREEN -->
+    <div id="alarmScreen" class="alarm-screen" aria-live="assertive">
+      <div class="alarm-screen-inner">
+        <div class="alarm-ring-pulse" id="alarmRingPulse"></div>
+        <div class="alarm-ring-time" id="alarmRingTime">07:20 AM</div>
+        <div class="alarm-ring-label" id="alarmRingLabel">Alarm Ringing</div>
+        <div class="alarm-ring-sub" id="alarmRingSub"></div>
+        <button class="stop-btn" id="stopBtn">STOP</button>
+      </div>
+    </div>
+
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
